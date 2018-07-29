@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+      "noImplicitAny": false,
+      "target": "es2015"
+  },
+}
