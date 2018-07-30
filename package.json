@@ -1,0 +1,35 @@
+{
+  "name": "kaicrypt",
+  "version": "1.0.0",
+  "description": "Kai's simple library for encryption and decryption using AES256.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Holayn/kaicrypt.git"
+  },
+  "keywords": [
+    "kaicrypt",
+    "encryption",
+    "decryption"
+  ],
+  "author": "Kai Wong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Holayn/kaicrypt/issues"
+  },
+  "homepage": "https://github.com/Holayn/kaicrypt#readme",
+  "dependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "crypto": "^1.0.1",
+    "typescript": "^2.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.4",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "tslint": "^5.11.0"
+  }
+}
