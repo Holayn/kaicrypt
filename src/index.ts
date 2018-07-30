@@ -10,16 +10,16 @@ const delimiter: any = ';';
 
 export function encrypt(stringToEncrypt: any, key: string): Promise<string> {
   return new Promise<string>((resolve: any, reject: any) => {
-    const iv = crypto.randomBytes(ivLength, (err: any, buf: any) => {
+    crypto.randomBytes(ivLength, (err: any, iv: any) => {
       if (err) {
         reject(err);
       }
-      // turn user key into 32 byte buffer
+      // aes256 requires 32 byte buffer as a key
       const hashKey: Buffer = createHashKey(key);
-      const cipher = crypto.createCipheriv(algorithm, hashKey, buf);
+      const cipher = crypto.createCipheriv(algorithm, hashKey, iv);
       let encrypted = cipher.update(stringToEncrypt, inputEncoding, outputEncoding);
       encrypted += cipher.final(outputEncoding);
-      resolve(encrypted + delimiter + buf.toString(outputEncoding));
+      resolve(encrypted + delimiter + iv.toString(outputEncoding));
     });
   });
 }
@@ -28,6 +28,7 @@ export function decrypt(stringToDecrypt: string, key: string): Promise<string> {
   return new Promise<string>((resolve: any, reject: any) => {
     try {
       const stringSplit: string[] = stringToDecrypt.split(delimiter);
+      // aes256 requires 32 byte buffer as a key
       const hashKey: Buffer = createHashKey(key);
       const iv: Buffer = new Buffer(stringSplit[1], outputEncoding);
       const decipher = crypto.createDecipheriv(algorithm, hashKey, iv);
@@ -38,16 +39,13 @@ export function decrypt(stringToDecrypt: string, key: string): Promise<string> {
     catch(err){
       reject(err);
     }
-
   });
 }
 
-
 function createHashKey(keyToHash: string): Buffer {
   const secret = "kwdingdong";
-  const hashKey = crypto.randomBytes(32);
+  // sha256 turns a string to a 32 byte buffer
   return crypto.createHmac('sha256', secret)
     .update(keyToHash)
     .digest();
-
 }

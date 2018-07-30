@@ -21,12 +21,15 @@
     "url": "https://github.com/Holayn/kaicrypt/issues"
   },
   "homepage": "https://github.com/Holayn/kaicrypt#readme",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@types/es6-promise": "^3.3.0",
+    "crypto": "^1.0.1",
+    "typescript": "^2.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.4",
     "gulp": "^3.9.1",
     "gulp-typescript": "^5.0.0-alpha.3",
-    "tslint": "^5.11.0",
-    "typescript": "^2.9.2"
+    "tslint": "^5.11.0"
   }
 }

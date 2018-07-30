@@ -24,13 +24,20 @@ function encrypt(stringToEncrypt, key) {
 }
 exports.encrypt = encrypt;
 function decrypt(stringToDecrypt, key) {
-    var stringSplit = stringToDecrypt.split(delimiter);
-    var hashKey = createHashKey(key);
-    var iv = new Buffer(stringSplit[1], outputEncoding);
-    var decipher = crypto.createDecipheriv(algorithm, hashKey, iv);
-    var decrypted = decipher.update(stringToDecrypt, outputEncoding, inputEncoding);
-    decrypted += decipher.final(inputEncoding);
-    return decrypted;
+    return new es6_promise_1.Promise(function (resolve, reject) {
+        try {
+            var stringSplit = stringToDecrypt.split(delimiter);
+            var hashKey = createHashKey(key);
+            var iv = new Buffer(stringSplit[1], outputEncoding);
+            var decipher = crypto.createDecipheriv(algorithm, hashKey, iv);
+            var decrypted = decipher.update(stringToDecrypt, outputEncoding, inputEncoding);
+            decrypted += decipher.final(inputEncoding);
+            resolve(decrypted);
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
 }
 exports.decrypt = decrypt;
 function createHashKey(keyToHash) {
