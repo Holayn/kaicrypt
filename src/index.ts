@@ -1,5 +1,4 @@
 import * as crypto from 'crypto';
-import { debug } from 'util';
 import {Promise} from 'es6-promise';
 
 const ivLength: number = 16;
@@ -48,4 +47,10 @@ function createHashKey(keyToHash: string): Buffer {
   return crypto.createHmac('sha256', secret)
     .update(keyToHash)
     .digest();
+}
+
+export function hashWithSHA256(keyToHash: string): string {
+  const hash = crypto.createHash('sha256');
+  hash.update(keyToHash);
+  return hash.digest('hex');
 }
