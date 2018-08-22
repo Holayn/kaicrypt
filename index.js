@@ -9,16 +9,16 @@ var inputEncoding = 'utf8';
 var delimiter = ';';
 function encrypt(stringToEncrypt, key) {
     return new es6_promise_1.Promise(function (resolve, reject) {
-        var iv = crypto.randomBytes(ivLength, function (err, buf) {
+        crypto.randomBytes(ivLength, function (err, iv) {
             if (err) {
                 reject(err);
             }
-            // turn user key into 32 byte buffer
+            // aes256 requires 32 byte buffer as a key
             var hashKey = createHashKey(key);
-            var cipher = crypto.createCipheriv(algorithm, hashKey, buf);
+            var cipher = crypto.createCipheriv(algorithm, hashKey, iv);
             var encrypted = cipher.update(stringToEncrypt, inputEncoding, outputEncoding);
             encrypted += cipher.final(outputEncoding);
-            resolve(encrypted + delimiter + buf.toString(outputEncoding));
+            resolve(encrypted + delimiter + iv.toString(outputEncoding));
         });
     });
 }
@@ -27,6 +27,7 @@ function decrypt(stringToDecrypt, key) {
     return new es6_promise_1.Promise(function (resolve, reject) {
         try {
             var stringSplit = stringToDecrypt.split(delimiter);
+            // aes256 requires 32 byte buffer as a key
             var hashKey = createHashKey(key);
             var iv = new Buffer(stringSplit[1], outputEncoding);
             var decipher = crypto.createDecipheriv(algorithm, hashKey, iv);
@@ -42,8 +43,14 @@ function decrypt(stringToDecrypt, key) {
 exports.decrypt = decrypt;
 function createHashKey(keyToHash) {
     var secret = "kwdingdong";
-    var hashKey = crypto.randomBytes(32);
+    // sha256 turns a string to a 32 byte buffer
     return crypto.createHmac('sha256', secret)
         .update(keyToHash)
         .digest();
 }
+function hashWithSHA256(keyToHash) {
+    var hash = crypto.createHash('sha256');
+    hash.update(keyToHash);
+    return hash.digest('hex');
+}
+exports.hashWithSHA256 = hashWithSHA256;
