@@ -110,8 +110,14 @@ function createHashKey(keyToHash: string): Buffer {
     .digest();
 }
 
-export function hashWithSHA256(keyToHash: string): string {
+export function hashSHA256(keyToHash: string): string {
   const hash = crypto.createHash('sha256');
+  hash.update(keyToHash);
+  return hash.digest('hex');
+}
+
+export function hashSHA512(keyToHash: string): string {
+  const hash = crypto.createHash('sha512');
   hash.update(keyToHash);
   return hash.digest('hex');
 }
