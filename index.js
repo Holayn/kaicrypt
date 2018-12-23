@@ -99,7 +99,7 @@ function decryptPBKDF2(secret, stringToDecrypt) {
 exports.decryptPBKDF2 = decryptPBKDF2;
 function encryptBcryptAES(stringToEncrypt, secret) {
     return rxjs_1.Observable.create(function (observer) {
-        bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.genSalt(12, function (err, salt) {
             bcrypt.hash(secret, salt, function (err, hash) {
                 var iv = CryptoJS.lib.WordArray.random(128 / 8);
                 var encrypted = CryptoJS.AES.encrypt(stringToEncrypt, hash, {
@@ -152,7 +152,7 @@ function hashWithSHA256(keyToHash) {
 exports.hashWithSHA256 = hashWithSHA256;
 function hashWithBcrypt(keyToHash) {
     return new es6_promise_1.Promise(function (resolve, reject) {
-        bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.genSalt(12, function (err, salt) {
             bcrypt.hash(keyToHash, salt, function (err, hash) {
                 resolve(hash);
             });
