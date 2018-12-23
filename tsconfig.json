@@ -1,5 +1,11 @@
 {
+  "files": [
+    "src/*.ts"
+  ],
   "compilerOptions": {
-      "noImplicitAny": false,
-  },
+    "outDir": "./",
+    "noImplicitAny": true,
+    "target": "es5",
+    "lib": ["es2015"]
+  }
 }

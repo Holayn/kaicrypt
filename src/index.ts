@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as CryptoJS from 'crypto-js';
+import * as bcrypt from 'bcryptjs';
 import {Promise} from 'es6-promise';
 import { resolve } from 'dns';
 import { Observable, Observer } from 'rxjs';
@@ -102,6 +103,47 @@ export function decryptPBKDF2(secret: string, stringToDecrypt: string): Observab
   });
 }
 
+export function encryptBcryptAES(stringToEncrypt: any, secret: any): Observable<string> {
+  return Observable.create((observer: Observer<string>) => {
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(secret, salt, function(err, hash) {
+        const iv = CryptoJS.lib.WordArray.random(128/8);
+        const encrypted = CryptoJS.AES.encrypt(stringToEncrypt, hash, { 
+          iv: iv, 
+          padding: CryptoJS.pad.Pkcs7,
+          mode: CryptoJS.mode.CBC
+        });
+        // salt, iv will be hex 32 in length
+        // append them to the ciphertext for use  in decryption
+        var transitmessage = salt.toString()+ iv.toString() + encrypted.toString();
+        observer.next(transitmessage);
+      });
+    });
+  });
+}
+
+/**
+ * https://embed.plnkr.co/0VPU1zmmWC5wmTKPKnhg/
+ * @param stringToDecrypt 
+ * @param secret
+ */
+export function decryptBcryptAES(stringToDecrypt: string, secret: string): Observable<string> {
+  return Observable.create((observer: Observer<string>) => {
+    const salt = stringToDecrypt.substr(0, 29);
+    const iv = stringToDecrypt.substr(29, 32);
+    const encrypted = stringToDecrypt.substring(61);
+    bcrypt.hash(secret, salt, function(err, hash) {
+      const decrypted = CryptoJS.AES.decrypt(encrypted, hash, { 
+        iv: iv, 
+        padding: CryptoJS.pad.Pkcs7,
+        mode: CryptoJS.mode.CBC
+      });
+  
+      observer.next(decrypted.toString(CryptoJS.enc.Utf8));
+    });
+  });
+}
+
 function createHashKey(keyToHash: string): Buffer {
   const secret = "kwdingdong";
   // sha256 turns a string to a 32 byte buffer
@@ -114,4 +156,14 @@ export function hashWithSHA256(keyToHash: string): string {
   const hash = crypto.createHash('sha256');
   hash.update(keyToHash);
   return hash.digest('hex');
+}
+
+export function hashWithBcrypt(keyToHash: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(keyToHash, salt, (err, hash) => {
+        resolve(hash);
+      });
+    });
+  });
 }
