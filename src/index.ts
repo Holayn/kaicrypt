@@ -105,7 +105,7 @@ export function decryptPBKDF2(secret: string, stringToDecrypt: string): Observab
 
 export function encryptBcryptAES(stringToEncrypt: any, secret: any): Observable<string> {
   return Observable.create((observer: Observer<string>) => {
-    bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.genSalt(12, (err, salt) => {
       bcrypt.hash(secret, salt, function(err, hash) {
         const iv = CryptoJS.lib.WordArray.random(128/8);
         const encrypted = CryptoJS.AES.encrypt(stringToEncrypt, hash, { 
@@ -160,7 +160,7 @@ export function hashWithSHA256(keyToHash: string): string {
 
 export function hashWithBcrypt(keyToHash: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.genSalt(12, (err, salt) => {
       bcrypt.hash(keyToHash, salt, (err, hash) => {
         resolve(hash);
       });
